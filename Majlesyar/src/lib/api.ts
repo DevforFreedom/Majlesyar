@@ -204,15 +204,60 @@ export async function getProduct(id: string): Promise<Product | null> {
 }
 
 export async function createProduct(_product: Omit<Product, "id">): Promise<Product> {
-  throw new Error("Product creation is not exposed in public API.");
+  const payload = {
+    name: _product.name,
+    description: _product.description,
+    price: _product.price,
+    category_ids: _product.categoryIds,
+    event_types: _product.eventTypes,
+    contents: _product.contents,
+    image: _product.image || null,
+    featured: _product.featured,
+    available: _product.available,
+  };
+
+  const created = await requestJson<ApiProduct>("/api/v1/admin/products/", {
+    method: "POST",
+    auth: true,
+    body: payload,
+  });
+  return mapProduct(created);
 }
 
 export async function updateProduct(_id: string, _updates: Partial<Product>): Promise<Product | null> {
-  throw new Error("Product update is not exposed in public API.");
+  const payload: Record<string, unknown> = {};
+  if (_updates.name !== undefined) payload.name = _updates.name;
+  if (_updates.description !== undefined) payload.description = _updates.description;
+  if (_updates.price !== undefined) payload.price = _updates.price;
+  if (_updates.categoryIds !== undefined) payload.category_ids = _updates.categoryIds;
+  if (_updates.eventTypes !== undefined) payload.event_types = _updates.eventTypes;
+  if (_updates.contents !== undefined) payload.contents = _updates.contents;
+  if (_updates.image !== undefined) payload.image = _updates.image;
+  if (_updates.featured !== undefined) payload.featured = _updates.featured;
+  if (_updates.available !== undefined) payload.available = _updates.available;
+
+  try {
+    const updated = await requestJson<ApiProduct>(`/api/v1/admin/products/${_id}/`, {
+      method: "PATCH",
+      auth: true,
+      body: payload,
+    });
+    return mapProduct(updated);
+  } catch {
+    return null;
+  }
 }
 
 export async function deleteProduct(_id: string): Promise<boolean> {
-  throw new Error("Product deletion is not exposed in public API.");
+  try {
+    await requestJson(`/api/v1/admin/products/${_id}/`, {
+      method: "DELETE",
+      auth: true,
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function listCategories(): Promise<Category[]> {

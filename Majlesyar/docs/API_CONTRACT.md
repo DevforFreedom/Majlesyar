@@ -302,6 +302,64 @@ Response `201`:
 }
 ```
 
+## 13) Admin Products List/Create
+
+- `GET /api/v1/admin/products/`
+- `POST /api/v1/admin/products/`
+
+Auth:
+
+- JWT required (`is_staff=true`)
+
+List query params:
+
+- `search`
+- `category` (uuid)
+- `featured` (`true|false`)
+- `available` (`true|false`)
+
+Create request body:
+
+```json
+{
+  "name": "پک جدید",
+  "description": "توضیحات",
+  "price": 120000,
+  "category_ids": ["uuid"],
+  "event_types": ["conference"],
+  "contents": ["آیتم ۱", "آیتم ۲"],
+  "image": "/placeholder.svg",
+  "featured": false,
+  "available": true
+}
+```
+
+Create response `201`:
+
+- Same product shape as public product endpoints.
+
+Notes:
+
+- `image` string is accepted for frontend compatibility.
+- For real file upload, send multipart with `image_file`.
+- Uploaded images are served from `/media/...` (production serving is enabled via `SERVE_MEDIA=1` by default).
+
+## 14) Admin Product Detail/Update/Delete
+
+- `GET /api/v1/admin/products/{id}/`
+- `PATCH /api/v1/admin/products/{id}/`
+- `DELETE /api/v1/admin/products/{id}/`
+
+Auth:
+
+- JWT required (`is_staff=true`)
+
+Patch request body supports partial fields from create payload.
+
+Delete response:
+
+- `204 No Content`
+
 ## API Documentation
 
 - `GET /api/schema/` -> OpenAPI schema

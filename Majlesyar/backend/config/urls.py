@@ -1,3 +1,4 @@
+import os
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -30,5 +31,6 @@ if (settings.BASE_DIR / "frontend_dist" / "index.html").exists():
         ),
     ]
 
-if settings.DEBUG:
+serve_media = os.getenv("SERVE_MEDIA", "1").strip().lower() in {"1", "true", "yes", "on"}
+if settings.DEBUG or serve_media:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

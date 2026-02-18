@@ -1,12 +1,23 @@
 FROM node:20-alpine AS frontend-build
 
-WORKDIR /frontend
+WORKDIR /workspace
+COPY . .
 
-COPY pakto-pack-joy-main/package*.json ./
-RUN npm ci
-
-COPY pakto-pack-joy-main/ ./
-RUN npm run build -- --base=/static/
+RUN set -eux; \
+    APP_DIR="."; \
+    if [ ! -f package.json ]; then \
+      APP_DIR=""; \
+      for cand in */package.json; do \
+        [ -e "$cand" ] || continue; \
+        dir="$(dirname "$cand")"; \
+        if [ -f "$dir/backend/requirements.txt" ]; then APP_DIR="$dir"; break; fi; \
+      done; \
+      [ -n "$APP_DIR" ] || { echo "No app root found (expected package.json + backend/requirements.txt)."; ls -la; exit 1; }; \
+    fi; \
+    cd "${APP_DIR}"; \
+    npm ci; \
+    npm run build -- --base=/static/; \
+    cp -a dist /frontend_dist
 
 
 FROM python:3.12-slim AS app
@@ -21,13 +32,27 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DJANGO_DEBUG=0 \
     DJANGO_ALLOWED_HOSTS=*
 
+WORKDIR /workspace
+COPY . .
+
+RUN set -eux; \
+    APP_DIR="."; \
+    if [ ! -f backend/requirements.txt ]; then \
+      APP_DIR=""; \
+      for cand in */backend/requirements.txt; do \
+        [ -e "$cand" ] || continue; \
+        dir="$(dirname "$(dirname "$cand")")"; \
+        if [ -f "$dir/package.json" ]; then APP_DIR="$dir"; break; fi; \
+      done; \
+      [ -n "$APP_DIR" ] || { echo "No backend root found (expected backend/requirements.txt)."; ls -la; exit 1; }; \
+    fi; \
+    python -m pip install -r "${APP_DIR}/backend/requirements.txt"; \
+    mkdir -p /app; \
+    cp -a "${APP_DIR}/backend/." /app/
+
+COPY --from=frontend-build /frontend_dist /app/frontend_dist
+
 WORKDIR /app
-
-COPY pakto-pack-joy-main/backend/requirements.txt ./
-RUN python -m pip install -r requirements.txt
-
-COPY pakto-pack-joy-main/backend/ ./
-COPY --from=frontend-build /frontend/dist /app/frontend_dist
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000

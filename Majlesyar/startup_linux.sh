@@ -6,6 +6,9 @@ IMAGE_NAME="${IMAGE_NAME:-${APP_NAME}:latest}"
 CONTAINER_NAME="${CONTAINER_NAME:-${APP_NAME}}"
 HOST_PORT="${HOST_PORT:-80}"
 APP_PORT="${APP_PORT:-8000}"
+CPU_LIMIT="${CPU_LIMIT:-2.0}"
+MEMORY_LIMIT="${MEMORY_LIMIT:-2g}"
+MEMORY_SWAP_LIMIT="${MEMORY_SWAP_LIMIT:-2g}"
 DOMAIN="${DOMAIN:-}"
 PUBLIC_URL="${PUBLIC_URL:-}"
 APT_USE_IRAN_MIRROR="${APT_USE_IRAN_MIRROR:-1}"
@@ -218,6 +221,9 @@ start_container() {
   docker run -d \
     --name "${CONTAINER_NAME}" \
     --restart unless-stopped \
+    --cpus "${CPU_LIMIT}" \
+    --memory "${MEMORY_LIMIT}" \
+    --memory-swap "${MEMORY_SWAP_LIMIT}" \
     --env-file "${ENV_FILE}" \
     -p "${HOST_PORT}:${APP_PORT}" \
     -v "${DB_FILE}:/app/db.sqlite3" \

@@ -1,0 +1,49 @@
+.unfold [class*="field-box"],
+.unfold .form-row,
+.unfold .aligned label {
+  direction: rtl;
+}
+
+.unfold input[type="text"],
+.unfold input[type="number"],
+.unfold input[type="email"],
+.unfold input[type="url"],
+.unfold input[type="password"],
+.unfold input[type="search"],
+.unfold textarea,
+.unfold select {
+  width: 100% !important;
+  min-height: 2.75rem !important;
+  color: #f8fafc !important;
+  background: #13274a !important;
+  border: 1px solid #35568a !important;
+  border-radius: 0.625rem !important;
+}
+
+.unfold textarea {
+  min-height: 8.5rem !important;
+}
+
+.unfold .help,
+.unfold .helptext,
+.unfold .help ul {
+  color: #9ec5ff !important;
+  font-size: 0.8rem !important;
+  line-height: 1.7 !important;
+}
+
+.unfold .readonly,
+.unfold .fieldBox .readonly {
+  color: #e5edff !important;
+  background: #13274a !important;
+  border: 1px dashed #4d74ae !important;
+  border-radius: 0.625rem !important;
+  display: block;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.75rem;
+}
+
+.unfold .selector,
+.unfold .selector select {
+  min-height: 17rem !important;
+}

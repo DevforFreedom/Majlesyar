@@ -83,7 +83,7 @@ class CustomerInputSerializer(serializers.Serializer):
 
     def validate_phone(self, value: str) -> str:
         if not re.match(r"^09\d{9}$", value):
-            raise serializers.ValidationError("Phone number must match Iranian mobile format.")
+            raise serializers.ValidationError("شماره موبایل باید با فرمت صحیح ایران (09xxxxxxxxx) باشد.")
         return value
 
 
@@ -117,11 +117,11 @@ class OrderCreateSerializer(serializers.Serializer):
         total_qty = sum(item["quantity"] for item in items)
         if total_qty < settings.min_order_qty:
             raise serializers.ValidationError(
-                {"items": f"Minimum order quantity is {settings.min_order_qty}."}
+                {"items": f"حداقل تعداد سفارش {settings.min_order_qty} عدد است."}
             )
 
         if settings.allowed_provinces and customer["province"] not in settings.allowed_provinces:
-            raise serializers.ValidationError({"customer": {"province": "Province is not allowed."}})
+            raise serializers.ValidationError({"customer": {"province": "ارسال به این استان فعال نیست."}})
 
         enabled_payment_methods = {
             method.get("id")
@@ -129,12 +129,12 @@ class OrderCreateSerializer(serializers.Serializer):
             if isinstance(method, dict) and method.get("enabled")
         }
         if enabled_payment_methods and payment_method not in enabled_payment_methods:
-            raise serializers.ValidationError({"payment_method": "Payment method is not enabled."})
+            raise serializers.ValidationError({"payment_method": "روش پرداخت انتخاب شده فعال نیست."})
 
         min_delivery_date = (timezone.localtime() + timedelta(hours=settings.lead_time_hours)).date()
         if delivery["date"] < min_delivery_date:
             raise serializers.ValidationError(
-                {"delivery": {"date": f"Delivery date must be on or after {min_delivery_date.isoformat()}."}}
+                {"delivery": {"date": f"تاریخ تحویل باید بعد از {min_delivery_date.isoformat()} باشد."}}
             )
 
         return attrs

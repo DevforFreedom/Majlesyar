@@ -11,14 +11,24 @@
       "icon": "✨"
     },
     {
-      "name": "همایش",
+      "name": "حلوا",
       "slug": "conference",
-      "icon": "🎤"
+      "icon": "🍮"
     },
     {
-      "name": "ترحیم",
+      "name": "پک ترحیم",
       "slug": "memorial",
       "icon": "🕯️"
+    },
+    {
+      "name": "دفاع",
+      "slug": "defense",
+      "icon": "🎓"
+    },
+    {
+      "name": "تولد/مهمانی",
+      "slug": "party",
+      "icon": "🎂"
     },
     {
       "name": "پک خالی",
@@ -26,9 +36,40 @@
       "icon": "📦"
     }
   ],
+  "tags": [
+    {
+      "name": "پک آماده",
+      "slug": "ready-pack"
+    },
+    {
+      "name": "پرفروش",
+      "slug": "popular"
+    },
+    {
+      "name": "مراسمی",
+      "slug": "ceremony"
+    },
+    {
+      "name": "دانشجویی",
+      "slug": "student"
+    },
+    {
+      "name": "تولد",
+      "slug": "birthday"
+    },
+    {
+      "name": "ویژه",
+      "slug": "vip"
+    },
+    {
+      "name": "پک خالی",
+      "slug": "empty-pack"
+    }
+  ],
   "products": [
     {
       "name": "پک اقتصادی همایش",
+      "url_slug": "pak-eghtesadi-hamayesh",
       "description": "پک ساده و اقتصادی مناسب برای همایش‌های بزرگ",
       "price": 85000,
       "category_slugs": [
@@ -37,6 +78,11 @@
       ],
       "event_types": [
         "conference"
+      ],
+      "tag_slugs": [
+        "ready-pack",
+        "popular",
+        "ceremony"
       ],
       "contents": [
         "آبمیوه کوچک",
@@ -49,6 +95,7 @@
     },
     {
       "name": "پک لوکس همایش",
+      "url_slug": "pak-lux-hamayesh",
       "description": "پک کامل و لوکس با بهترین محتویات",
       "price": 165000,
       "category_slugs": [
@@ -57,6 +104,11 @@
       ],
       "event_types": [
         "conference"
+      ],
+      "tag_slugs": [
+        "ready-pack",
+        "vip",
+        "popular"
       ],
       "contents": [
         "آبمیوه طبیعی",
@@ -71,6 +123,7 @@
     },
     {
       "name": "پک ترحیم ساده",
+      "url_slug": "pak-tarhim-sade",
       "description": "پک متناسب با فضای احترام‌آمیز مراسم",
       "price": 95000,
       "category_slugs": [
@@ -79,6 +132,10 @@
       ],
       "event_types": [
         "memorial"
+      ],
+      "tag_slugs": [
+        "ready-pack",
+        "ceremony"
       ],
       "contents": [
         "خرما",
@@ -92,6 +149,7 @@
     },
     {
       "name": "پک ترحیم کامل",
+      "url_slug": "pak-tarhim-kamel",
       "description": "پک کامل شامل تمام ملزومات مراسم ترحیم",
       "price": 145000,
       "category_slugs": [
@@ -100,6 +158,11 @@
       ],
       "event_types": [
         "memorial"
+      ],
+      "tag_slugs": [
+        "ready-pack",
+        "ceremony",
+        "popular"
       ],
       "contents": [
         "خرما مضافتی",
@@ -115,6 +178,7 @@
     },
     {
       "name": "پک دفاع پایان‌نامه",
+      "url_slug": "pak-defa-payanname",
       "description": "پک ویژه برای جلسات دفاع دانشگاهی",
       "price": 125000,
       "category_slugs": [
@@ -122,6 +186,10 @@
       ],
       "event_types": [
         "defense"
+      ],
+      "tag_slugs": [
+        "ready-pack",
+        "student"
       ],
       "contents": [
         "شیرینی تر",
@@ -136,6 +204,7 @@
     },
     {
       "name": "پک تولد شاد",
+      "url_slug": "pak-tavalod-shad",
       "description": "پک رنگارنگ برای جشن‌های تولد",
       "price": 135000,
       "category_slugs": [
@@ -143,6 +212,10 @@
       ],
       "event_types": [
         "party"
+      ],
+      "tag_slugs": [
+        "ready-pack",
+        "birthday"
       ],
       "contents": [
         "کیک تولد کوچک",
@@ -157,6 +230,7 @@
     },
     {
       "name": "پک VIP",
+      "url_slug": "pak-vip",
       "description": "لوکس‌ترین پک برای مهمانان ویژه",
       "price": null,
       "category_slugs": [
@@ -165,6 +239,11 @@
       "event_types": [
         "conference",
         "defense"
+      ],
+      "tag_slugs": [
+        "ready-pack",
+        "vip",
+        "popular"
       ],
       "contents": [
         "سوپرایز ویژه",
@@ -176,6 +255,7 @@
     },
     {
       "name": "پک خالی زیپ‌لاک",
+      "url_slug": "pak-khali-ziplock",
       "description": "بسته‌بندی خالی زیپ‌لاک برای پک سفارشی",
       "price": 15000,
       "category_slugs": [
@@ -187,6 +267,9 @@
         "defense",
         "party"
       ],
+      "tag_slugs": [
+        "empty-pack"
+      ],
       "contents": [
         "کیسه زیپ‌لاک با لوگو"
       ],
@@ -196,6 +279,7 @@
     },
     {
       "name": "پک خالی جعبه‌ای",
+      "url_slug": "pak-khali-jabbei",
       "description": "جعبه خالی مقوایی برای پک سفارشی",
       "price": 25000,
       "category_slugs": [
@@ -206,6 +290,9 @@
         "memorial",
         "defense",
         "party"
+      ],
+      "tag_slugs": [
+        "empty-pack"
       ],
       "contents": [
         "جعبه مقوایی با لوگو"

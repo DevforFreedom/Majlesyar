@@ -12,7 +12,7 @@ import type { Product } from '@/types/domain';
 import { ShoppingCart, ArrowRight, Check, Phone } from 'lucide-react';
 
 export default function ProductPage() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -21,13 +21,16 @@ export default function ProductPage() {
 
   useEffect(() => {
     const loadProduct = async () => {
-      if (!id) return;
-      const data = await getProduct(id);
+      if (!slug) {
+        setLoading(false);
+        return;
+      }
+      const data = await getProduct(slug);
       setProduct(data);
       setLoading(false);
     };
     loadProduct();
-  }, [id]);
+  }, [slug]);
 
   const handleAddToCart = () => {
     if (!product || product.price === null) return;
@@ -87,11 +90,13 @@ export default function ProductPage() {
     );
   }
 
+  const productPath = `/product/${encodeURIComponent(product.urlSlug || product.id)}`;
+
   // Breadcrumbs for SEO
   const breadcrumbs = [
     { name: 'خانه', url: '/' },
     { name: 'فروشگاه', url: '/shop' },
-    { name: product.name, url: `/product/${product.id}` },
+    { name: product.name, url: productPath },
   ];
 
   return (
@@ -99,7 +104,7 @@ export default function ProductPage() {
       <SEO
         title={product.name}
         description={product.description}
-        path={`/product/${product.id}`}
+        path={productPath}
         product={{
           name: product.name,
           description: product.description,

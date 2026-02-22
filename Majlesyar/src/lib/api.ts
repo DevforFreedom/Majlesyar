@@ -25,6 +25,8 @@ interface ApiCategory {
 interface ApiProduct {
   id: string;
   name: string;
+  url_slug: string;
+  uri?: string;
   description: string;
   price: number | null;
   category_ids: string[];
@@ -136,6 +138,7 @@ function mapProduct(apiProduct: ApiProduct): Product {
   return {
     id: apiProduct.id,
     name: apiProduct.name,
+    urlSlug: apiProduct.url_slug || apiProduct.id,
     description: apiProduct.description,
     price: apiProduct.price,
     categoryIds: apiProduct.category_ids || [],
@@ -223,9 +226,9 @@ export async function listProducts(): Promise<Product[]> {
   return products.map(mapProduct);
 }
 
-export async function getProduct(id: string): Promise<Product | null> {
+export async function getProduct(identifier: string): Promise<Product | null> {
   try {
-    const product = await requestJson<ApiProduct>(`/api/v1/products/${id}/`);
+    const product = await requestJson<ApiProduct>(`/api/v1/products/${encodeURIComponent(identifier)}/`);
     return mapProduct(product);
   } catch {
     return null;
@@ -235,6 +238,7 @@ export async function getProduct(id: string): Promise<Product | null> {
 export async function createProduct(_product: Omit<Product, "id">): Promise<Product> {
   const payload = {
     name: _product.name,
+    url_slug: _product.urlSlug || "",
     description: _product.description,
     price: _product.price,
     category_ids: _product.categoryIds,
@@ -258,6 +262,7 @@ export async function createProduct(_product: Omit<Product, "id">): Promise<Prod
 export async function updateProduct(_id: string, _updates: Partial<Product>): Promise<Product | null> {
   const payload: Record<string, unknown> = {};
   if (_updates.name !== undefined) payload.name = _updates.name;
+  if (_updates.urlSlug !== undefined) payload.url_slug = _updates.urlSlug;
   if (_updates.description !== undefined) payload.description = _updates.description;
   if (_updates.price !== undefined) payload.price = _updates.price;
   if (_updates.categoryIds !== undefined) payload.category_ids = _updates.categoryIds;

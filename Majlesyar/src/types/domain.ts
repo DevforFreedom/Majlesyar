@@ -8,6 +8,7 @@ export interface Category {
 export interface Product {
   id: string;
   name: string;
+  urlSlug: string;
   description: string;
   price: number | null;
   categoryIds: string[];

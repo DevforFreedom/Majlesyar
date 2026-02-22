@@ -1,9 +1,9 @@
-from django.contrib.auth import get_user_model
+﻿from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Category, Product
+from .models import Category, Product, Tag
 
 
 class AdminProductApiTests(APITestCase):
@@ -19,8 +19,10 @@ class AdminProductApiTests(APITestCase):
             password="pass12345",
             is_staff=False,
         )
-        self.category_one = Category.objects.create(name="Conference", slug="conference", icon="C")
-        self.category_two = Category.objects.create(name="Luxury", slug="luxury", icon="L")
+        self.category_one = Category.objects.create(name="Conference", slug="conference-test", icon="C")
+        self.category_two = Category.objects.create(name="Luxury", slug="luxury-test", icon="L")
+        self.tag_one = Tag.objects.create(name="Popular", slug="popular-test")
+        self.tag_two = Tag.objects.create(name="Ready", slug="ready-test")
 
     def _staff_auth(self):
         self.client.force_authenticate(user=self.staff_user)
@@ -29,9 +31,11 @@ class AdminProductApiTests(APITestCase):
         self._staff_auth()
         payload = {
             "name": "محصول تست",
+            "url_slug": "mahsol-test",
             "description": "توضیحات",
             "price": 123000,
             "category_ids": [str(self.category_one.id), str(self.category_two.id)],
+            "tag_ids": [str(self.tag_one.id), str(self.tag_two.id)],
             "event_types": ["conference", "party"],
             "contents": ["آیتم 1", "آیتم 2"],
             "image": "/placeholder.svg",
@@ -44,13 +48,19 @@ class AdminProductApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn("id", response.data)
         self.assertEqual(response.data["name"], payload["name"])
+        self.assertEqual(response.data["url_slug"], payload["url_slug"])
         self.assertCountEqual(response.data["category_ids"], payload["category_ids"])
+        self.assertCountEqual(response.data["tag_ids"], payload["tag_ids"])
 
         created = Product.objects.get(id=response.data["id"])
         self.assertEqual(created.price, payload["price"])
         self.assertCountEqual(
             list(created.categories.values_list("id", flat=True)),
             [self.category_one.id, self.category_two.id],
+        )
+        self.assertCountEqual(
+            list(created.tags.values_list("id", flat=True)),
+            [self.tag_one.id, self.tag_two.id],
         )
 
     def test_staff_can_patch_product_categories_and_flags(self):
@@ -65,10 +75,13 @@ class AdminProductApiTests(APITestCase):
             available=True,
         )
         product.categories.set([self.category_one])
+        product.tags.set([self.tag_one])
 
         payload = {
             "name": "Updated product",
+            "url_slug": "updated-product",
             "category_ids": [str(self.category_two.id)],
+            "tag_ids": [str(self.tag_two.id)],
             "available": False,
             "featured": True,
             "image": None,
@@ -78,7 +91,9 @@ class AdminProductApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], "Updated product")
+        self.assertEqual(response.data["url_slug"], "updated-product")
         self.assertCountEqual(response.data["category_ids"], [str(self.category_two.id)])
+        self.assertCountEqual(response.data["tag_ids"], [str(self.tag_two.id)])
         self.assertFalse(response.data["available"])
         self.assertTrue(response.data["featured"])
 
@@ -112,3 +127,25 @@ class AdminProductApiTests(APITestCase):
         response = self.client.post(reverse("admin-product-list-create"), payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_public_product_detail_supports_lookup_by_url_slug_and_uuid(self):
+        product = Product.objects.create(
+            name="Public Product",
+            url_slug="public-product",
+            description="desc",
+            price=10000,
+            event_types=["conference"],
+            contents=["item"],
+        )
+        product.categories.set([self.category_one])
+        product.tags.set([self.tag_one])
+
+        by_slug = self.client.get(reverse("product-detail", kwargs={"lookup": "public-product"}))
+        self.assertEqual(by_slug.status_code, status.HTTP_200_OK)
+        self.assertEqual(by_slug.data["id"], str(product.id))
+        self.assertEqual(by_slug.data["url_slug"], "public-product")
+
+        by_uuid = self.client.get(reverse("product-detail", kwargs={"lookup": str(product.id)}))
+        self.assertEqual(by_uuid.status_code, status.HTTP_200_OK)
+        self.assertEqual(by_uuid.data["id"], str(product.id))
+        self.assertEqual(by_uuid.data["url_slug"], "public-product")

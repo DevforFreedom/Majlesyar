@@ -47,11 +47,12 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   const shouldShowImage = product.image && product.image !== '/placeholder.svg' && !imageFailed;
+  const productPath = `/product/${encodeURIComponent(product.urlSlug || product.id)}`;
 
   return (
     <article>
       <Link 
-        to={`/product/${product.id}`}
+        to={productPath}
         className="group block bg-card rounded-xl border border-border overflow-hidden card-hover focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
         aria-label={`مشاهده ${product.name}`}
       >

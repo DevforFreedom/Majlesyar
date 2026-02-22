@@ -16,6 +16,7 @@ class PersianAdminFormMixin:
     placeholder_map = {
         "name": "نام را وارد کنید",
         "slug": "نمونه: economic-pack",
+        "url_slug": "نمونه: vip-pack",
         "description": "توضیحات را وارد کنید",
         "event_types": 'مثال: ["conference", "memorial"]',
         "contents": 'مثال: ["آب معدنی", "میوه", "شیرینی"]',
@@ -29,6 +30,22 @@ class PersianAdminFormMixin:
         "delivery_window": "مثال: 10-12",
         "payment_method": "مثال: pay-later",
         "note": "متن یادداشت را وارد کنید",
+    }
+    help_text_map = {
+        "name": "نام محصول یا آیتم را کوتاه، دقیق و قابل فهم وارد کنید.",
+        "slug": "اسلاگ باید انگلیسی، یکتا و بدون فاصله باشد.",
+        "url_slug": "بخش پایانی آدرس محصول را وارد کنید (فقط انگلیسی، عدد و خط تیره).",
+        "description": "توضیح کامل و واضحی از محصول برای نمایش در سایت وارد کنید.",
+        "categories": "دسته‌بندی‌های مرتبط با این محصول را انتخاب کنید.",
+        "tags": "تگ‌های مرتبط با این محصول را انتخاب کنید.",
+        "event_types": "نوع مراسم را با مقدارهای معتبر مثل conference یا memorial ثبت کنید.",
+        "contents": "اقلام داخل پک را به صورت لیست ثبت کنید.",
+        "image": "تصویر واضح و باکیفیت محصول را انتخاب کنید.",
+        "image_name": "نام فایل تصویر را کوتاه و معنی‌دار وارد کنید.",
+        "image_alt": "متن جایگزین تصویر را توصیفی و واضح وارد کنید.",
+        "price": "قیمت را به تومان ثبت کنید. در صورت توافقی بودن، فیلد را خالی بگذارید.",
+        "available": "اگر محصول قابل سفارش است این گزینه را فعال نگه دارید.",
+        "featured": "برای نمایش محصول در بخش ویژه، این گزینه را فعال کنید.",
     }
 
     def _build_placeholder(self, db_field: models.Field, label: str) -> str:
@@ -71,8 +88,11 @@ class PersianAdminFormMixin:
                 if placeholder:
                     widget.attrs.setdefault("placeholder", placeholder)
 
+        explicit_help_text = self.help_text_map.get(db_field.name)
         help_text = (formfield.help_text or "").strip()
-        if not help_text:
+        if explicit_help_text:
+            formfield.help_text = explicit_help_text
+        elif not help_text:
             formfield.help_text = f"نکته: مقدار «{label}» را دقیق وارد کنید."
         elif "نکته:" not in help_text:
             formfield.help_text = f"{help_text} | نکته: قبل از ذخیره، مقدار این فیلد را بررسی کنید."

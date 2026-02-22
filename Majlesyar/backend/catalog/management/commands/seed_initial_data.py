@@ -4,7 +4,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from catalog.models import BuilderItem, Category, Product
+from catalog.models import BuilderItem, Category, Product, Tag
 from site_settings.models import SiteSetting
 
 
@@ -43,11 +43,24 @@ class Command(BaseCommand):
             )
             categories_by_slug[category.slug] = category
 
+        tags_by_slug: dict[str, Tag] = {}
+        for item in payload.get("tags", []):
+            tag, _ = Tag.objects.update_or_create(
+                slug=item["slug"],
+                defaults={
+                    "name": item["name"],
+                },
+            )
+            tags_by_slug[tag.slug] = tag
+
         for item in payload.get("products", []):
             category_slugs = item.get("category_slugs", [])
+            event_type_slugs = item.get("event_types", [])
+            tag_slugs = item.get("tag_slugs", [])
             product, _ = Product.objects.update_or_create(
                 name=item["name"],
                 defaults={
+                    "url_slug": item.get("url_slug", ""),
                     "description": item.get("description", ""),
                     "price": item.get("price"),
                     "event_types": item.get("event_types", []),
@@ -56,10 +69,13 @@ class Command(BaseCommand):
                     "available": item.get("available", True),
                 },
             )
+            combined_slugs = list(dict.fromkeys([*category_slugs, *event_type_slugs]))
             product_categories = [
-                categories_by_slug[slug] for slug in category_slugs if slug in categories_by_slug
+                categories_by_slug[slug] for slug in combined_slugs if slug in categories_by_slug
             ]
             product.categories.set(product_categories)
+            product_tags = [tags_by_slug[slug] for slug in tag_slugs if slug in tags_by_slug]
+            product.tags.set(product_tags)
 
         for item in payload.get("builder_items", []):
             BuilderItem.objects.update_or_create(

@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from PIL import Image, UnidentifiedImageError
+from django.utils.text import slugify
 
-from .models import BuilderItem, Category, Product
+from .models import BuilderItem, Category, Product, Tag
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -10,19 +11,30 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ("id", "name", "slug", "icon")
 
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("id", "name", "slug")
+
+
 class ProductSerializer(serializers.ModelSerializer):
     category_ids = serializers.SerializerMethodField()
+    tag_ids = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
     image_name = serializers.SerializerMethodField()
+    uri = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = (
             "id",
             "name",
+            "url_slug",
+            "uri",
             "description",
             "price",
             "category_ids",
+            "tag_ids",
             "event_types",
             "contents",
             "image",
@@ -34,6 +46,9 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_category_ids(self, obj: Product) -> list[str]:
         return [str(category_id) for category_id in obj.categories.values_list("id", flat=True)]
+
+    def get_tag_ids(self, obj: Product) -> list[str]:
+        return [str(tag_id) for tag_id in obj.tags.values_list("id", flat=True)]
 
     def get_image(self, obj: Product) -> str | None:
         if not obj.image:
@@ -50,9 +65,17 @@ class ProductSerializer(serializers.ModelSerializer):
             return str(obj.image.name).split("/")[-1]
         return ""
 
+    def get_uri(self, obj: Product) -> str:
+        return f"/product/{obj.url_slug}"
+
 
 class ProductWriteSerializer(serializers.ModelSerializer):
     category_ids = serializers.ListField(
+        child=serializers.UUIDField(format="hex_verbose"),
+        required=False,
+        allow_empty=True,
+    )
+    tag_ids = serializers.ListField(
         child=serializers.UUIDField(format="hex_verbose"),
         required=False,
         allow_empty=True,
@@ -76,9 +99,11 @@ class ProductWriteSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
+            "url_slug",
             "description",
             "price",
             "category_ids",
+            "tag_ids",
             "event_types",
             "contents",
             "image",
@@ -110,11 +135,31 @@ class ProductWriteSerializer(serializers.ModelSerializer):
     def validate_contents(self, value: list[str]) -> list[str]:
         return [item.strip() for item in value if item.strip()]
 
+    def validate_tag_ids(self, value: list) -> list:
+        if not value:
+            return value
+        requested_ids = [str(item) for item in value]
+        found_ids = set(
+            str(item) for item in Tag.objects.filter(id__in=requested_ids).values_list("id", flat=True)
+        )
+        missing = [item for item in requested_ids if item not in found_ids]
+        if missing:
+            raise serializers.ValidationError(
+                f"شناسه تگ نامعتبر است: {', '.join(missing)}",
+            )
+        return value
+
     def validate_image_name(self, value: str) -> str:
         return (value or "").strip()
 
     def validate_image_alt(self, value: str) -> str:
         return (value or "").strip()
+
+    def validate_url_slug(self, value: str) -> str:
+        cleaned = slugify((value or "").strip())
+        if not cleaned:
+            return ""
+        return cleaned
 
     def validate_image_file(self, value):
         max_size_bytes = 5 * 1024 * 1024
@@ -133,6 +178,7 @@ class ProductWriteSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict) -> Product:
         category_ids = validated_data.pop("category_ids", [])
+        tag_ids = validated_data.pop("tag_ids", [])
         validated_data.pop("image", None)
         image_file = validated_data.pop("image_file", serializers.empty)
         if image_file is not serializers.empty:
@@ -141,10 +187,13 @@ class ProductWriteSerializer(serializers.ModelSerializer):
         product = Product.objects.create(**validated_data)
         if category_ids is not None:
             product.categories.set(Category.objects.filter(id__in=category_ids))
+        if tag_ids is not None:
+            product.tags.set(Tag.objects.filter(id__in=tag_ids))
         return product
 
     def update(self, instance: Product, validated_data: dict) -> Product:
         category_ids = validated_data.pop("category_ids", serializers.empty)
+        tag_ids = validated_data.pop("tag_ids", serializers.empty)
         image_marker = validated_data.pop("image", serializers.empty)
         image_file = validated_data.pop("image_file", serializers.empty)
 
@@ -162,6 +211,8 @@ class ProductWriteSerializer(serializers.ModelSerializer):
 
         if category_ids is not serializers.empty:
             instance.categories.set(Category.objects.filter(id__in=category_ids))
+        if tag_ids is not serializers.empty:
+            instance.tags.set(Tag.objects.filter(id__in=tag_ids))
 
         return instance
 

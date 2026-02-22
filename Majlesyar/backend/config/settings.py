@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import re
 
+from django.templatetags.static import static as static_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 FRONTEND_DIST_DIR = BASE_DIR / "frontend_dist"
@@ -23,6 +24,10 @@ def env_bool(name: str, default: bool = False) -> bool:
 def env_list(name: str, default: str = "") -> list[str]:
     raw = os.getenv(name, default)
     return [item.strip() for item in raw.split(",") if item.strip()]
+
+
+def admin_overrides_stylesheet(_request) -> str:
+    return static_url("admin/css/persian-admin-overrides.css")
 
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-insecure-secret-key-change-me")
@@ -184,22 +189,49 @@ CSRF_PROXY_ALLOW_MISSING_REFERER = env_bool("CSRF_PROXY_ALLOW_MISSING_REFERER", 
 UNFOLD = {
     "SITE_TITLE": "پنل مدیریت مجلس یار",
     "SITE_HEADER": "مجلس یار",
+    "SITE_SUBHEADER": "مدیریت فروش و سفارش پک‌های پذیرایی",
     "SITE_SYMBOL": "inventory_2",
+    "THEME": "light",
+    "BORDER_RADIUS": "0.75rem",
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": False,
+    "STYLES": [
+        admin_overrides_stylesheet,
+    ],
     "COLORS": {
+        "base": {
+            "50": "#fdfbf7",
+            "100": "#faf6ef",
+            "200": "#f3ebdd",
+            "300": "#e8dcc7",
+            "400": "#d8c3a6",
+            "500": "#c2a585",
+            "600": "#9f8468",
+            "700": "#7e6851",
+            "800": "#5f4f3f",
+            "900": "#463b31",
+            "950": "#2f2620",
+        },
         "primary": {
-            "50": "#f0f9ff",
-            "100": "#e0f2fe",
-            "200": "#bae6fd",
-            "300": "#7dd3fc",
-            "400": "#38bdf8",
-            "500": "#0ea5e9",
-            "600": "#0284c7",
-            "700": "#0369a1",
-            "800": "#075985",
-            "900": "#0c4a6e",
-            "950": "#082f49",
-        }
+            "50": "#e6f9fd",
+            "100": "#ccf3fb",
+            "200": "#99e8f8",
+            "300": "#66dcf4",
+            "400": "#33d1f1",
+            "500": "#00c2f2",
+            "600": "#00a9d4",
+            "700": "#0088aa",
+            "800": "#006b85",
+            "900": "#004f63",
+            "950": "#003342",
+        },
+        "font": {
+            "subtle-light": "#6a5a49",
+            "subtle-dark": "#d8c3a6",
+            "default-light": "#3c3128",
+            "default-dark": "#f3ebdd",
+            "important-light": "#241d17",
+            "important-dark": "#faf6ef",
+        },
     },
 }

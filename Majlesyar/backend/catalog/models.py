@@ -2,6 +2,7 @@ import uuid
 
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils.text import slugify
 
 
 class Category(models.Model):
@@ -39,6 +40,35 @@ class Category(models.Model):
         return self.name
 
 
+class Tag(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        verbose_name="شناسه",
+        help_text="نکته: این شناسه به صورت خودکار ساخته می شود.",
+    )
+    name = models.CharField(
+        max_length=128,
+        verbose_name="نام تگ",
+        help_text="نکته: نام نمایشی تگ محصول را وارد کنید.",
+    )
+    slug = models.SlugField(
+        max_length=128,
+        unique=True,
+        verbose_name="اسلاگ",
+        help_text="نکته: نسخه انگلیسی و یکتا برای آدرس دهی (مثال: fast-delivery).",
+    )
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "تگ"
+        verbose_name_plural = "تگ ها"
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class Product(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -51,6 +81,13 @@ class Product(models.Model):
         max_length=255,
         verbose_name="نام محصول",
         help_text="نکته: نام کامل محصول برای نمایش در سایت.",
+    )
+    url_slug = models.SlugField(
+        max_length=180,
+        unique=True,
+        blank=True,
+        verbose_name="آدرس محصول (URI)",
+        help_text="نکته: آدرس محصول را به انگلیسی و یکتا وارد کنید (مثال: vip-pack).",
     )
     description = models.TextField(
         blank=True,
@@ -70,6 +107,13 @@ class Product(models.Model):
         blank=True,
         verbose_name="دسته بندی ها",
         help_text="نکته: دسته بندی های مرتبط با این محصول را انتخاب کنید.",
+    )
+    tags = models.ManyToManyField(
+        Tag,
+        related_name="products",
+        blank=True,
+        verbose_name="تگ ها",
+        help_text="نکته: تگ های مرتبط با این محصول را انتخاب کنید.",
     )
     event_types = models.JSONField(
         default=list,
@@ -126,6 +170,20 @@ class Product(models.Model):
     )
 
     def save(self, *args, **kwargs):
+        # Normalize/generate URI slug so each product has a stable /product/{slug} path.
+        base_slug = slugify((self.url_slug or "").strip()) if self.url_slug else ""
+        if not base_slug:
+            base_slug = slugify(self.name or "")
+        if not base_slug:
+            base_slug = f"product-{str(self.id or uuid.uuid4())[:8]}"
+
+        candidate = base_slug
+        suffix = 2
+        while Product.objects.exclude(pk=self.pk).filter(url_slug=candidate).exists():
+            candidate = f"{base_slug}-{suffix}"
+            suffix += 1
+        self.url_slug = candidate
+
         # Keep a readable image name even when manager does not set it manually.
         if self.image and not self.image_name:
             self.image_name = str(self.image.name).split("/")[-1]

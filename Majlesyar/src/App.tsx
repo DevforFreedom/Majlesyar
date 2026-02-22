@@ -67,7 +67,7 @@ const App = () => (
 
             {/* Lazy loaded Routes */}
             <Route path="/shop" element={<ShopPage />} />
-            <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/product/:slug" element={<ProductPage />} />
             <Route path="/events/:slug" element={<EventPage />} />
             <Route path="/builder" element={<BuilderPage />} />
             <Route path="/cart" element={<CartPage />} />

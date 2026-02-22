@@ -1,14 +1,56 @@
+.unfold {
+  --brand-cyan-500: #00c2f2;
+  --brand-cyan-600: #00a9d4;
+  --brand-ink: #241d17;
+  --brand-muted: #4f6174;
+  --brand-cream-50: #fdfbf7;
+  --brand-cream-100: #faf6ef;
+  --brand-border: #e5d9c8;
+}
+
+.unfold,
 .unfold [class*="field-box"],
 .unfold .form-row,
 .unfold .aligned label {
   direction: rtl;
+  font-family: "Vazirmatn", "IRANSansX", Tahoma, sans-serif;
+}
+
+.unfold fieldset.module,
+.unfold .module.aligned,
+.unfold .inline-group,
+.unfold .selector {
+  background: var(--brand-cream-50) !important;
+  border: 1px solid var(--brand-border) !important;
+  border-radius: 0.9rem !important;
 }
 
 .unfold .field-box label,
 .unfold .form-row label,
 .unfold .aligned label {
-  color: #0f172a !important;
-  font-weight: 600 !important;
+  color: var(--brand-ink) !important;
+  font-size: 0.93rem !important;
+  font-weight: 700 !important;
+  line-height: 1.65 !important;
+}
+
+.unfold .help,
+.unfold .helptext,
+.unfold .help ul,
+.unfold .help li {
+  color: var(--brand-muted) !important;
+  font-size: 0.84rem !important;
+  line-height: 1.85 !important;
+}
+
+.unfold .help,
+.unfold .helptext {
+  background: var(--brand-cream-100);
+  border: 1px solid var(--brand-border);
+  border-radius: 0.55rem;
+  display: block;
+  margin-top: 0.35rem;
+  padding: 0.4rem 0.65rem;
 }
 
 .unfold input[type="text"],
@@ -20,11 +62,22 @@
 .unfold textarea,
 .unfold select {
   width: 100% !important;
-  min-height: 2.75rem !important;
-  color: #0f172a !important;
+  min-height: 2.8rem !important;
+  color: var(--brand-ink) !important;
   background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 0.625rem !important;
+  border: 1px solid #d7c9b5 !important;
+  border-radius: 0.72rem !important;
+}
+
+.unfold input[type="text"]::placeholder,
+.unfold input[type="number"]::placeholder,
+.unfold input[type="email"]::placeholder,
+.unfold input[type="url"]::placeholder,
+.unfold input[type="password"]::placeholder,
+.unfold input[type="search"]::placeholder,
+.unfold textarea::placeholder {
+  color: #8a7560 !important;
+  opacity: 1;
 }
 
 .unfold input[type="text"]:focus,
@@ -35,55 +88,52 @@
 .unfold input[type="search"]:focus,
 .unfold textarea:focus,
 .unfold select:focus {
-  border-color: #0ea5e9 !important;
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18) !important;
+  border-color: var(--brand-cyan-600) !important;
+  box-shadow: 0 0 0 3px rgba(0, 169, 212, 0.2) !important;
   outline: none !important;
 }
 
-.unfold textarea {
-  min-height: 8.5rem !important;
+.unfold input[type="checkbox"],
+.unfold input[type="radio"] {
+  accent-color: var(--brand-cyan-600);
 }
 
-.unfold .help,
-.unfold .helptext,
-.unfold .help ul {
-  color: #475569 !important;
-  font-size: 0.82rem !important;
-  line-height: 1.8 !important;
+.unfold textarea {
+  min-height: 8.7rem !important;
+}
+
+.unfold select[multiple],
+.unfold .selector select {
+  min-height: 16rem !important;
 }
 
 .unfold .readonly,
 .unfold .fieldBox .readonly {
-  color: #334155 !important;
-  background: #f8fafc !important;
-  border: 1px dashed #94a3b8 !important;
-  border-radius: 0.625rem !important;
+  color: #3f3328 !important;
+  background: var(--brand-cream-100) !important;
+  border: 1px dashed #bea486 !important;
+  border-radius: 0.72rem !important;
   display: block;
-  min-height: 2.75rem;
-  padding: 0.6rem 0.75rem;
-}
-
-.unfold .selector,
-.unfold .selector select {
-  min-height: 17rem !important;
+  min-height: 2.8rem;
+  padding: 0.62rem 0.8rem;
 }
 
 .unfold .clear-image-selection-btn {
   align-items: center;
-  background: #e0f2fe;
-  border: 1px solid #7dd3fc;
-  border-radius: 0.5rem;
-  color: #0c4a6e;
+  background: #def6fd;
+  border: 1px solid #a6e7f7;
+  border-radius: 0.55rem;
+  color: #00526a;
   cursor: pointer;
   display: inline-flex;
-  font-size: 0.8rem;
-  font-weight: 600;
-  gap: 0.25rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  gap: 0.3rem;
   margin-top: 0.5rem;
-  padding: 0.4rem 0.7rem;
+  padding: 0.42rem 0.75rem;
 }
 
 .unfold .clear-image-selection-btn:hover {
-  background: #bae6fd;
-  border-color: #38bdf8;
+  background: #c8f0fb;
+  border-color: #7ad8f2;
 }

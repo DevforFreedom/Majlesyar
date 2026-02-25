@@ -72,6 +72,37 @@ $env:USE_POSTGRES="1"
 docker compose --profile postgres up --build
 ```
 
+## Fresh Debian Auto-Startup (Provider Startup Script)
+
+You can use `Majlesyar/startup_linux.sh` directly as a server "startup script" on a fresh Debian VPS.
+
+What it now does automatically:
+
+1. Rewrites APT repos to Iranian mirror (default enabled via `APT_USE_IRAN_MIRROR=1`).
+2. Installs Docker if missing.
+3. Clones project source if Dockerfile/backend are not already present.
+4. Builds image and starts container.
+
+Recommended provider env vars:
+
+```text
+REPO_URL=https://github.com/codeeefactory/Majlesyar.git
+REPO_REF=main
+PROJECT_SUBDIR=Majlesyar
+HOST_PORT=80
+APP_PORT=8000
+DOMAIN=your-domain.com
+ADMIN_USERNAME=admin
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=change-this-strong-password
+```
+
+Notes:
+
+- If your provider has no env-var UI, edit the top of `startup_linux.sh` defaults before uploading.
+- If you do not set `DOMAIN`, the script auto-uses server IP for `DJANGO_ALLOWED_HOSTS`.
+- Startup logs can be checked with `docker logs -f majlesyar` after server is up.
+
 ## Smoke Checklist
 
 1. Products page loads from backend (`/shop`).

@@ -1,0 +1,1248 @@
+openapi: 3.0.3
+info:
+  title: Majlesyar API
+  version: 1.0.0
+  description: Backend API for products, settings, and order workflows.
+paths:
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - fa
+      tags:
+      - schema
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/admin/orders/:
+    get:
+      operationId: v1_admin_orders_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: کدام فیلد باید هنگام مرتب‌سازی نتایج استفاده شود.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: یک عبارت جستجو.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+          description: ''
+  /api/v1/admin/orders/{public_id}/:
+    patch:
+      operationId: v1_admin_orders_partial_update
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderStatusUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderStatusUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderStatusUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderStatusUpdate'
+          description: ''
+  /api/v1/admin/orders/{public_id}/notes/:
+    post:
+      operationId: v1_admin_orders_notes_create
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderNoteCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrderNoteCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrderNoteCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderNoteCreate'
+          description: ''
+  /api/v1/admin/products/:
+    get:
+      operationId: v1_admin_products_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: کدام فیلد باید هنگام مرتب‌سازی نتایج استفاده شود.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: یک عبارت جستجو.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+          description: ''
+    post:
+      operationId: v1_admin_products_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProductWrite'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductWrite'
+          description: ''
+  /api/v1/admin/products/{id}/:
+    get:
+      operationId: v1_admin_products_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+    put:
+      operationId: v1_admin_products_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProductWrite'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductWrite'
+          description: ''
+    patch:
+      operationId: v1_admin_products_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProductWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProductWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProductWrite'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductWrite'
+          description: ''
+    delete:
+      operationId: v1_admin_products_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/token/:
+    post:
+      operationId: v1_auth_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/v1/auth/token/refresh/:
+    post:
+      operationId: v1_auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v1/builder-items/:
+    get:
+      operationId: v1_builder_items_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: کدام فیلد باید هنگام مرتب‌سازی نتایج استفاده شود.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: یک عبارت جستجو.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BuilderItem'
+          description: ''
+  /api/v1/categories/:
+    get:
+      operationId: v1_categories_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: کدام فیلد باید هنگام مرتب‌سازی نتایج استفاده شود.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: یک عبارت جستجو.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+          description: ''
+  /api/v1/orders/:
+    post:
+      operationId: v1_orders_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCreate'
+          description: ''
+  /api/v1/orders/{public_id}/:
+    get:
+      operationId: v1_orders_retrieve
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+  /api/v1/products/:
+    get:
+      operationId: v1_products_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: کدام فیلد باید هنگام مرتب‌سازی نتایج استفاده شود.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: یک عبارت جستجو.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+          description: ''
+  /api/v1/products/{lookup}/:
+    get:
+      operationId: v1_products_retrieve
+      parameters:
+      - in: path
+        name: lookup
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+  /api/v1/settings/:
+    get:
+      operationId: v1_settings_retrieve
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteSetting'
+          description: ''
+  /api/v1/tags/:
+    get:
+      operationId: v1_tags_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: کدام فیلد باید هنگام مرتب‌سازی نتایج استفاده شود.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: یک عبارت جستجو.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+          description: ''
+components:
+  schemas:
+    BuilderItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: شناسه
+          description: 'نکته: این شناسه به صورت خودکار ساخته می شود.'
+        name:
+          type: string
+          title: نام آیتم
+          description: 'نکته: نام آیتم سازنده پک را وارد کنید.'
+          maxLength: 255
+        group:
+          allOf:
+          - $ref: '#/components/schemas/GroupEnum'
+          title: گروه
+          description: |-
+            نکته: گروه آیتم را انتخاب کنید.
+
+            * `packaging` - بسته بندی
+            * `fruit` - میوه
+            * `drink` - نوشیدنی
+            * `snack` - اسنک
+            * `addon` - افزودنی
+        price:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: قیمت (تومان)
+          description: 'نکته: قیمت این آیتم را به تومان وارد کنید.'
+        required:
+          type: boolean
+          title: اجباری
+          description: 'نکته: اگر فعال باشد انتخاب این آیتم برای ساخت پک الزامی است.'
+        image:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - group
+      - id
+      - image
+      - name
+      - price
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: شناسه
+          description: 'نکته: این شناسه به صورت خودکار ساخته می شود.'
+        name:
+          type: string
+          title: نام دسته بندی
+          description: 'نکته: نام نمایشی دسته بندی را وارد کنید.'
+          maxLength: 128
+        slug:
+          type: string
+          title: اسلاگ
+          description: 'نکته: نسخه انگلیسی و یکتا برای آدرس دهی (مثال: economic).'
+          maxLength: 128
+          pattern: ^[-a-zA-Z0-9_]+$
+        icon:
+          type: string
+          title: آیکون
+          description: 'نکته: می توانید ایموجی یا آیکون کوتاه وارد کنید.'
+          maxLength: 32
+      required:
+      - id
+      - name
+      - slug
+    CustomerInput:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        phone:
+          type: string
+          maxLength: 32
+        province:
+          type: string
+          maxLength: 128
+        address:
+          type: string
+        notes:
+          type: string
+      required:
+      - address
+      - name
+      - phone
+      - province
+    DeliveryInput:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        window:
+          type: string
+          maxLength: 64
+      required:
+      - date
+      - window
+    GroupEnum:
+      enum:
+      - packaging
+      - fruit
+      - drink
+      - snack
+      - addon
+      type: string
+      description: |-
+        * `packaging` - بسته بندی
+        * `fruit` - میوه
+        * `drink` - نوشیدنی
+        * `snack` - اسنک
+        * `addon` - افزودنی
+    Order:
+      type: object
+      properties:
+        public_id:
+          type: string
+          title: کد سفارش
+          description: 'نکته: کد یکتای سفارش به صورت خودکار تولید می شود.'
+          maxLength: 20
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: وضعیت سفارش
+          description: |-
+            نکته: وضعیت جاری سفارش را مشخص می کند.
+
+            * `pending` - در انتظار
+            * `confirmed` - تایید شده
+            * `preparing` - در حال آماده سازی
+            * `shipped` - ارسال شده
+            * `delivered` - تحویل شده
+        customer:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        delivery:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        payment_method:
+          type: string
+          title: روش پرداخت
+          description: 'نکته: روش پرداخت انتخاب شده توسط مشتری.'
+          maxLength: 64
+        total:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: مبلغ کل (تومان)
+          description: 'نکته: مجموع نهایی سفارش به تومان.'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: زمان ثبت
+          description: 'نکته: زمان ثبت سفارش به صورت خودکار.'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          readOnly: true
+        notes:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderNote'
+          readOnly: true
+      required:
+      - created_at
+      - customer
+      - delivery
+      - items
+      - notes
+      - payment_method
+      - public_id
+    OrderCreate:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemInput'
+        customer:
+          $ref: '#/components/schemas/CustomerInput'
+        delivery:
+          $ref: '#/components/schemas/DeliveryInput'
+        payment_method:
+          type: string
+          maxLength: 64
+      required:
+      - customer
+      - delivery
+      - items
+      - payment_method
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: شناسه
+          description: 'نکته: این شناسه به صورت خودکار ساخته می شود.'
+        product_id:
+          type: string
+          nullable: true
+          readOnly: true
+        name:
+          type: string
+          title: نام آیتم
+          description: 'نکته: نام نمایشی آیتم سفارش.'
+          maxLength: 255
+        quantity:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 1
+          format: int64
+          title: تعداد
+          description: 'نکته: تعداد این آیتم در سفارش.'
+        price:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: قیمت واحد (تومان)
+          description: 'نکته: قیمت هر واحد آیتم به تومان.'
+        is_custom_pack:
+          type: boolean
+          title: پک سفارشی
+          description: 'نکته: اگر فعال باشد آیتم از نوع پک سفارشی است.'
+        custom_config:
+          nullable: true
+          title: پیکربندی سفارشی
+          description: 'نکته: جزییات ترکیب پک سفارشی به صورت JSON.'
+      required:
+      - id
+      - name
+      - price
+      - product_id
+      - quantity
+    OrderItemInput:
+      type: object
+      properties:
+        product_id:
+          type: string
+          nullable: true
+        name:
+          type: string
+          maxLength: 255
+        quantity:
+          type: integer
+          minimum: 1
+        price:
+          type: integer
+          minimum: 0
+        is_custom_pack:
+          type: boolean
+          default: false
+        custom_config:
+          nullable: true
+      required:
+      - name
+      - price
+      - quantity
+    OrderNote:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: شناسه
+          description: 'نکته: این شناسه به صورت خودکار ساخته می شود.'
+        note:
+          type: string
+          title: متن یادداشت
+          description: 'نکته: توضیحات داخلی مربوط به سفارش را ثبت کنید.'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: زمان ثبت یادداشت
+          description: 'نکته: زمان ثبت این یادداشت به صورت خودکار.'
+        created_by:
+          type: string
+          readOnly: true
+      required:
+      - created_at
+      - created_by
+      - id
+      - note
+    OrderNoteCreate:
+      type: object
+      properties:
+        note:
+          type: string
+      required:
+      - note
+    OrderStatusUpdate:
+      type: object
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: وضعیت سفارش
+          description: |-
+            نکته: وضعیت جاری سفارش را مشخص می کند.
+
+            * `pending` - در انتظار
+            * `confirmed` - تایید شده
+            * `preparing` - در حال آماده سازی
+            * `shipped` - ارسال شده
+            * `delivered` - تحویل شده
+    PatchedOrderStatusUpdate:
+      type: object
+      properties:
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          title: وضعیت سفارش
+          description: |-
+            نکته: وضعیت جاری سفارش را مشخص می کند.
+
+            * `pending` - در انتظار
+            * `confirmed` - تایید شده
+            * `preparing` - در حال آماده سازی
+            * `shipped` - ارسال شده
+            * `delivered` - تحویل شده
+    PatchedProductWrite:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: شناسه
+          description: 'نکته: این شناسه به صورت خودکار ساخته می شود.'
+        name:
+          type: string
+          title: نام محصول
+          description: 'نکته: نام کامل محصول برای نمایش در سایت.'
+          maxLength: 255
+        url_slug:
+          type: string
+          title: آدرس محصول (URI)
+          description: 'نکته: آدرس محصول را به انگلیسی و یکتا وارد کنید (مثال: vip-pack).'
+          maxLength: 180
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          title: توضیحات
+          description: 'نکته: توضیحات کوتاه و شفاف درباره محصول بنویسید.'
+        price:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+          title: قیمت (تومان)
+          description: 'نکته: مبلغ را به تومان وارد کنید. برای محصولات توافقی خالی
+            بگذارید.'
+        category_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        tag_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        event_types:
+          type: array
+          items:
+            type: string
+            maxLength: 64
+        contents:
+          type: array
+          items:
+            type: string
+            maxLength: 255
+        image:
+          type: string
+          writeOnly: true
+          nullable: true
+        image_file:
+          type: string
+          format: uri
+          writeOnly: true
+          nullable: true
+        image_name:
+          type: string
+          title: نام تصویر
+          description: 'راهنما: یک نام خوانا برای تصویر وارد کنید (مثال: pak-terhim-luxury).
+            این فیلد برای مدیریت بهتر تصاویر است.'
+          maxLength: 255
+        image_alt:
+          type: string
+          title: متن جایگزین تصویر (Alt)
+          description: 'راهنما: یک توضیح کوتاه و دقیق برای تصویر بنویسید تا در دسترس
+            پذیری و سئو استفاده شود.'
+          maxLength: 255
+        featured:
+          type: boolean
+          title: ویژه
+          description: 'نکته: اگر فعال باشد، محصول در بخش ویژه نمایش داده می شود.'
+        available:
+          type: boolean
+          title: موجود
+          description: 'نکته: اگر غیرفعال باشد، سفارش این محصول ممکن نیست.'
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: شناسه
+          description: 'نکته: این شناسه به صورت خودکار ساخته می شود.'
+        name:
+          type: string
+          title: نام محصول
+          description: 'نکته: نام کامل محصول برای نمایش در سایت.'
+          maxLength: 255
+        url_slug:
+          type: string
+          title: آدرس محصول (URI)
+          description: 'نکته: آدرس محصول را به انگلیسی و یکتا وارد کنید (مثال: vip-pack).'
+          maxLength: 180
+          pattern: ^[-a-zA-Z0-9_]+$
+        uri:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          title: توضیحات
+          description: 'نکته: توضیحات کوتاه و شفاف درباره محصول بنویسید.'
+        price:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+          title: قیمت (تومان)
+          description: 'نکته: مبلغ را به تومان وارد کنید. برای محصولات توافقی خالی
+            بگذارید.'
+        category_ids:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        tag_ids:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        event_types:
+          title: نوع مراسم
+          description: 'نکته: لیست نوع مراسم به صورت JSON (مثال: ["conference"]).'
+        contents:
+          title: اقلام داخل پک
+          description: 'نکته: اقلام محصول را به صورت لیست JSON وارد کنید.'
+        image:
+          type: string
+          nullable: true
+          readOnly: true
+        image_name:
+          type: string
+          readOnly: true
+        image_alt:
+          type: string
+          title: متن جایگزین تصویر (Alt)
+          description: 'راهنما: یک توضیح کوتاه و دقیق برای تصویر بنویسید تا در دسترس
+            پذیری و سئو استفاده شود.'
+          maxLength: 255
+        featured:
+          type: boolean
+          title: ویژه
+          description: 'نکته: اگر فعال باشد، محصول در بخش ویژه نمایش داده می شود.'
+        available:
+          type: boolean
+          title: موجود
+          description: 'نکته: اگر غیرفعال باشد، سفارش این محصول ممکن نیست.'
+      required:
+      - category_ids
+      - id
+      - image
+      - image_name
+      - name
+      - tag_ids
+      - uri
+    ProductWrite:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: شناسه
+          description: 'نکته: این شناسه به صورت خودکار ساخته می شود.'
+        name:
+          type: string
+          title: نام محصول
+          description: 'نکته: نام کامل محصول برای نمایش در سایت.'
+          maxLength: 255
+        url_slug:
+          type: string
+          title: آدرس محصول (URI)
+          description: 'نکته: آدرس محصول را به انگلیسی و یکتا وارد کنید (مثال: vip-pack).'
+          maxLength: 180
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          title: توضیحات
+          description: 'نکته: توضیحات کوتاه و شفاف درباره محصول بنویسید.'
+        price:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+          title: قیمت (تومان)
+          description: 'نکته: مبلغ را به تومان وارد کنید. برای محصولات توافقی خالی
+            بگذارید.'
+        category_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        tag_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        event_types:
+          type: array
+          items:
+            type: string
+            maxLength: 64
+        contents:
+          type: array
+          items:
+            type: string
+            maxLength: 255
+        image:
+          type: string
+          writeOnly: true
+          nullable: true
+        image_file:
+          type: string
+          format: uri
+          writeOnly: true
+          nullable: true
+        image_name:
+          type: string
+          title: نام تصویر
+          description: 'راهنما: یک نام خوانا برای تصویر وارد کنید (مثال: pak-terhim-luxury).
+            این فیلد برای مدیریت بهتر تصاویر است.'
+          maxLength: 255
+        image_alt:
+          type: string
+          title: متن جایگزین تصویر (Alt)
+          description: 'راهنما: یک توضیح کوتاه و دقیق برای تصویر بنویسید تا در دسترس
+            پذیری و سئو استفاده شود.'
+          maxLength: 255
+        featured:
+          type: boolean
+          title: ویژه
+          description: 'نکته: اگر فعال باشد، محصول در بخش ویژه نمایش داده می شود.'
+        available:
+          type: boolean
+          title: موجود
+          description: 'نکته: اگر غیرفعال باشد، سفارش این محصول ممکن نیست.'
+      required:
+      - id
+      - name
+    SiteSetting:
+      type: object
+      properties:
+        min_order_qty:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 1
+          format: int64
+          title: حداقل تعداد سفارش
+          description: 'نکته: مشتری باید حداقل این تعداد را برای ثبت سفارش وارد کند.'
+        lead_time_hours:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: حداقل زمان آماده سازی (ساعت)
+          description: 'نکته: فاصله زمانی لازم از ثبت سفارش تا زمان تحویل.'
+        allowed_provinces:
+          title: استان های مجاز
+          description: 'نکته: استان های قابل ارسال را به صورت لیست JSON وارد کنید.'
+        delivery_windows:
+          title: بازه های تحویل
+          description: 'نکته: بازه های زمانی تحویل را به صورت لیست JSON وارد کنید.'
+        payment_methods:
+          title: روش های پرداخت
+          description: 'نکته: روش های پرداخت فعال/غیرفعال را به صورت JSON تنظیم کنید.'
+    StatusEnum:
+      enum:
+      - pending
+      - confirmed
+      - preparing
+      - shipped
+      - delivered
+      type: string
+      description: |-
+        * `pending` - در انتظار
+        * `confirmed` - تایید شده
+        * `preparing` - در حال آماده سازی
+        * `shipped` - ارسال شده
+        * `delivered` - تحویل شده
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          title: شناسه
+          description: 'نکته: این شناسه به صورت خودکار ساخته می شود.'
+        name:
+          type: string
+          title: نام تگ
+          description: 'نکته: نام نمایشی تگ محصول را وارد کنید.'
+          maxLength: 128
+        slug:
+          type: string
+          title: اسلاگ
+          description: 'نکته: نسخه انگلیسی و یکتا برای آدرس دهی (مثال: fast-delivery).'
+          maxLength: 128
+          pattern: ^[-a-zA-Z0-9_]+$
+      required:
+      - id
+      - name
+      - slug
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

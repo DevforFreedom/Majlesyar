@@ -28,7 +28,7 @@ interface SEOProps {
   keywords?: string[];
 }
 
-const SITE_NAME = "پاک تاپ";
+const SITE_NAME = "مجلس یار";
 const DEFAULT_DESCRIPTION =
   "سفارش آنلاین پک‌های پذیرایی و پک نذری برای همایش، ترحیم، جشن تولد و دفاع پایان‌نامه. ارسال سریع در تهران و البرز با تضمین کیفیت و تازگی";
 const DEFAULT_KEYWORDS = [

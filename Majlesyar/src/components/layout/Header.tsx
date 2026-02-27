@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, X, Package, Home, Store, Wrench, Search, Phone } from 'lucide-react';
+import { ShoppingCart, Menu, X, Package, Home, Store, Wrench, Search, Info } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
@@ -13,7 +13,7 @@ export function Header() {
   const navLinks = [
     { href: '/', label: 'خانه', icon: Home, hidden: false },
     { href: '/shop', label: 'فروشگاه', icon: Store, hidden: false },
-    { href: '/contact', label: 'تماس', icon: Phone, hidden: false },
+    { href: '/about', label: 'درباره ما', icon: Info, hidden: false },
     { href: '/builder', label: 'ساخت پک', icon: Wrench, hidden: true },
     { href: '/track', label: 'پیگیری سفارش', icon: Search, hidden: true },
   ];
@@ -23,7 +23,7 @@ export function Header() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur-md border-b border-border shadow-soft" role="banner">
+    <header className="sticky top-0 z-50 w-full bg-card border-b border-border shadow-soft" role="banner">
       <nav className="container flex h-16 items-center justify-between" aria-label="منوی اصلی">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group" aria-label="صفحه اصلی مجلس یار">

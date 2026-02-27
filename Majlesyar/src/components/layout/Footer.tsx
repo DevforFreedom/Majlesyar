@@ -1,8 +1,8 @@
 import { useState, type ComponentProps } from 'react';
 import { Link } from 'react-router-dom';
 import { Phone, MapPin, Instagram, Store, Home, Calendar, Send } from 'lucide-react';
-import eitaaLogo from '@/assets/social/eitaa.png';
-import baleLogo from '@/assets/social/bale.png';
+import eitaaLogo from '@/assets/social/eitaa.webp';
+import baleLogo from '@/assets/social/bale.webp';
 
 const CONTACT_PHONE = '09123456789';
 const WHATSAPP_URL = `https://wa.me/98${CONTACT_PHONE.slice(1)}`;
@@ -26,8 +26,8 @@ const EitaaIcon = ({ className, ...props }: SocialLogoProps) => (
   <img
     src={eitaaLogo}
     alt=""
-    width={192}
-    height={192}
+    width={96}
+    height={96}
     loading="lazy"
     decoding="async"
     draggable={false}
@@ -40,8 +40,8 @@ const BaleIcon = ({ className, ...props }: SocialLogoProps) => (
   <img
     src={baleLogo}
     alt=""
-    width={768}
-    height={768}
+    width={96}
+    height={96}
     loading="lazy"
     decoding="async"
     draggable={false}
@@ -95,7 +95,11 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-card border-t border-border mt-auto" role="contentinfo">
+    <footer
+      className="bg-card border-t border-border mt-auto"
+      role="contentinfo"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 1200px' }}
+    >
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Us */}

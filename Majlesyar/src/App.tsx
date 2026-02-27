@@ -3,14 +3,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
-import { FloatingContactButton } from "./components/FloatingContactButton";
+import ProductPage from "./pages/ProductPage";
 
-// Critical pages - load immediately for SEO
-import HomePage from "./pages/HomePage";
+// Keep product route eager; defer homepage code on non-home routes.
+const HomePage = lazy(() => import("./pages/HomePage"));
 
 // Lazy loaded pages - secondary routes
 const ShopPage = lazy(() => import("./pages/ShopPage"));
-const ProductPage = lazy(() => import("./pages/ProductPage"));
 const EventPage = lazy(() => import("./pages/EventPage"));
 const BuilderPage = lazy(() => import("./pages/BuilderPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
@@ -23,6 +22,9 @@ const AdminLoginPage = lazy(() => import("./pages/admin/AdminLoginPage"));
 const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrdersPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const LazyToaster = lazy(() => import("@/components/ui/sonner").then((m) => ({ default: m.Toaster })));
+const LazyFloatingContactButton = lazy(() =>
+  import("./components/FloatingContactButton").then((m) => ({ default: m.FloatingContactButton })),
+);
 
 // Loading fallback
 const PageLoader = () => (
@@ -51,6 +53,25 @@ function DeferredToaster() {
   return (
     <Suspense fallback={null}>
       <LazyToaster position="top-center" />
+    </Suspense>
+  );
+}
+
+function DeferredFloatingContactButton() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timerId = window.setTimeout(() => {
+      setIsVisible(true);
+    }, 1200);
+    return () => window.clearTimeout(timerId);
+  }, []);
+
+  if (!isVisible) return null;
+
+  return (
+    <Suspense fallback={null}>
+      <LazyFloatingContactButton />
     </Suspense>
   );
 }
@@ -86,7 +107,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-        <FloatingContactButton />
+        <DeferredFloatingContactButton />
       </BrowserRouter>
     </CartProvider>
   </SettingsProvider>

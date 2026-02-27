@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AppShell } from '@/components/layout';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,11 @@ import { getProduct } from '@/lib/api';
 import { notifySuccess } from '@/lib/notify';
 import { useCart } from '@/contexts/CartContext';
 import type { Product } from '@/types/domain';
-import { ShoppingCart, ArrowRight, Check, Phone } from 'lucide-react';
+import { ShoppingCart, ArrowRight, Check, Phone, Package } from 'lucide-react';
+
+const LazyProductFeedbackSection = lazy(() =>
+  import('@/components/ProductFeedbackSection').then((m) => ({ default: m.ProductFeedbackSection })),
+);
 
 export default function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -17,7 +21,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [imageFailed, setImageFailed] = useState(false);
-  const { addItem, minQuantityRequired } = useCart();
+  const { addItem } = useCart();
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -34,14 +38,14 @@ export default function ProductPage() {
 
   const handleAddToCart = () => {
     if (!product || product.price === null) return;
-    
+
     addItem({
       productId: product.id,
       name: product.name,
       quantity,
       price: product.price,
     });
-    
+
     notifySuccess(`${quantity} عدد ${product.name} به سبد خرید اضافه شد`);
   };
 
@@ -56,17 +60,43 @@ export default function ProductPage() {
     return (
       <AppShell>
         <div className="container py-8">
-          <div className="animate-pulse">
-            <div className="h-8 w-32 bg-muted rounded mb-8" />
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="aspect-square bg-muted rounded-2xl" />
+          <div className="animate-pulse space-y-8">
+            <div className="h-5 w-56 bg-muted rounded" />
+
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
               <div className="space-y-4">
-                <div className="h-8 bg-muted rounded w-2/3" />
-                <div className="h-4 bg-muted rounded w-full" />
-                <div className="h-4 bg-muted rounded w-3/4" />
-                <div className="h-12 bg-muted rounded w-1/2 mt-8" />
+                <div className="aspect-[4/3] sm:aspect-square bg-muted rounded-2xl border border-border" />
+              </div>
+
+              <div className="space-y-6 min-h-[32rem]">
+                <div className="space-y-3">
+                  <div className="h-9 bg-muted rounded w-3/4" />
+                  <div className="h-4 bg-muted rounded w-full" />
+                  <div className="h-4 bg-muted rounded w-5/6" />
+                </div>
+
+                <div className="bg-card rounded-xl border border-border p-4 space-y-3">
+                  <div className="h-5 bg-muted rounded w-40" />
+                  <div className="h-4 bg-muted rounded w-11/12" />
+                  <div className="h-4 bg-muted rounded w-10/12" />
+                  <div className="h-4 bg-muted rounded w-9/12" />
+                  <div className="h-4 bg-muted rounded w-10/12" />
+                </div>
+
+                <div className="py-4 border-t border-b border-border space-y-3">
+                  <div className="h-4 bg-muted rounded w-24" />
+                  <div className="h-9 bg-muted rounded w-48" />
+                </div>
+
+                <div className="space-y-4">
+                  <div className="h-10 bg-muted rounded w-44" />
+                  <div className="h-4 bg-muted rounded w-32" />
+                  <div className="h-12 bg-muted rounded-xl w-full" />
+                </div>
               </div>
             </div>
+
+            <div className="rounded-2xl border border-border bg-muted/30 min-h-[20rem]" />
           </div>
         </div>
       </AppShell>
@@ -140,9 +170,9 @@ export default function ProductPage() {
                   onError={() => setImageFailed(true)}
                 />
               ) : (
-              <div className="absolute inset-0 flex items-center justify-center text-9xl opacity-30">
-                📦
-              </div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Package className="w-24 h-24 text-muted-foreground/40" aria-hidden="true" />
+                </div>
               )}
               {product.featured && (
                 <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-sm font-semibold px-3 py-1.5 rounded-full">
@@ -153,7 +183,7 @@ export default function ProductPage() {
           </div>
 
           {/* Product Info */}
-          <div className="space-y-6">
+          <div className="space-y-6 min-h-[32rem]">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
                 {product.name}
@@ -163,7 +193,7 @@ export default function ProductPage() {
 
             {/* Contents */}
             <div className="bg-card rounded-xl border border-border p-4">
-              <h3 className="font-semibold text-foreground mb-3">محتویات پک:</h3>
+              <h2 className="font-semibold text-foreground mb-3">محتویات پک:</h2>
               <ul className="space-y-2">
                 {product.contents.map((item, index) => (
                   <li key={index} className="flex items-center gap-2 text-muted-foreground">
@@ -196,9 +226,9 @@ export default function ProductPage() {
                   </p>
                 )}
 
-                <Button 
-                  variant="gold" 
-                  size="xl" 
+                <Button
+                  variant="gold"
+                  size="xl"
                   className="w-full gap-2"
                   onClick={handleAddToCart}
                 >
@@ -225,8 +255,15 @@ export default function ProductPage() {
             )}
           </div>
         </div>
+
+        <Suspense
+          fallback={
+            <section className="mt-12 rounded-2xl border border-border bg-muted/30 min-h-[20rem]" aria-hidden="true" />
+          }
+        >
+          <LazyProductFeedbackSection productName={product.name} />
+        </Suspense>
       </div>
     </AppShell>
   );
 }
-

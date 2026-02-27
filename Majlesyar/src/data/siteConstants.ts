@@ -22,7 +22,7 @@ export const eventTypes: EventType[] = [
   },
   {
     id: "memorial",
-    name: "پک ترحیم",
+    name: "ترحیم",
     slug: "memorial",
     description: "پک‌های متناسب با مراسم ترحیم",
     icon: "🕯️",

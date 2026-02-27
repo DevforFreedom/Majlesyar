@@ -119,11 +119,19 @@
   }
 
   html {
-    font-family: 'Vazirmatn', system-ui, sans-serif;
+    font-family: "Vazirmatn", Tahoma, "Segoe UI", system-ui, sans-serif;
+    scrollbar-gutter: stable;
+  }
+
+  @supports not (scrollbar-gutter: stable) {
+    html {
+      overflow-y: scroll;
+    }
   }
 
   body {
     @apply bg-background text-foreground antialiased;
+    line-height: 1.5;
   }
 
   /* RTL Specific Adjustments */

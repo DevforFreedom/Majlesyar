@@ -13,7 +13,7 @@ const SHOULD_IGNORE_ENV_BASE_URL =
 const API_BASE_URL =
   ENV_API_BASE_URL && !SHOULD_IGNORE_ENV_BASE_URL ? ENV_API_BASE_URL.replace(/\/+$/, "") : "";
 
-class HttpError extends Error {
+export class HttpError extends Error {
   status: number;
   payload: unknown;
 
@@ -122,7 +122,7 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
 }
 
-async function parseResponseBody(response: Response): Promise<unknown> {
+export async function parseResponseBody(response: Response): Promise<unknown> {
   const contentType = response.headers.get("content-type") || "";
   if (contentType.includes("application/json")) {
     return response.json();
@@ -130,7 +130,7 @@ async function parseResponseBody(response: Response): Promise<unknown> {
   return response.text();
 }
 
-function extractErrorMessage(payload: unknown, fallback: string): string {
+export function extractErrorMessage(payload: unknown, fallback: string): string {
   if (!payload) return fallback;
   if (typeof payload === "string") return payload;
   if (typeof payload === "object") {

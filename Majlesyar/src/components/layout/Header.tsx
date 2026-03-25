@@ -14,7 +14,7 @@ export function Header() {
     { href: '/', label: 'خانه', icon: Home, hidden: false },
     { href: '/shop', label: 'فروشگاه', icon: Store, hidden: false },
     { href: '/about', label: 'درباره ما', icon: Info, hidden: false },
-    { href: '/builder', label: 'ساخت پک', icon: Wrench, hidden: true },
+    { href: '/builder', label: 'ساخت پک', icon: Wrench, hidden: false },
     { href: '/track', label: 'پیگیری سفارش', icon: Search, hidden: true },
   ];
 

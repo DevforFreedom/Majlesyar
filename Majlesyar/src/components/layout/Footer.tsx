@@ -178,7 +178,7 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">تماس با ما</h3>
             <div className="space-y-3">
               <a 
-                href="tel:02112345678" 
+                href="tel:09915505141" 
                 className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
               >
                 <Phone className="w-4 h-4" aria-hidden="true" />
@@ -186,7 +186,7 @@ export function Footer() {
               </a>
               <div className="flex items-start gap-2 text-muted-foreground text-sm">
                 <MapPin className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
-                <span>تهران، خیابان ولیعصر</span>
+                <span>تهران، امیرآباد، خیابان کارگر شمالی، خیابان فرشی مقدم(شانزدهم)، پلاک ۹۱، واحد۶.</span>
               </div>
               <a 
                 href="https://instagram.com/majlesyar" 

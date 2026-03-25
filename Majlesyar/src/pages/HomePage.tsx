@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { EventCard } from '@/components/EventCard';
 import { ProductCard } from '@/components/ProductCard';
 import { eventTypes } from '@/data/siteConstants';
-import { Sparkles, Clock, ArrowLeft, Truck, Shield, Star } from 'lucide-react';
+import { Sparkles, Clock, ArrowLeft, Truck, Shield, Star, Wrench } from 'lucide-react';
 import { listProducts } from '@/lib/api';
 import type { Product } from '@/types/domain';
 
@@ -102,7 +102,27 @@ export default function HomePage() {
               حداقل سفارش ۴۰ عدد با تحویل سریع در تهران و البرز.
             </p>
 
-            {/* Hidden for now: CTA actions */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center pt-4">
+              <Link to="/shop" className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  className="w-full sm:min-w-[200px] gap-2 min-h-[48px] touch-manipulation"
+                >
+                  مشاهده فروشگاه
+                  <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+                </Button>
+              </Link>
+              <Link to="/builder" className="w-full sm:w-auto">
+                <Button
+                  variant="gold"
+                  size="lg"
+                  className="w-full sm:min-w-[200px] gap-2 min-h-[48px] touch-manipulation"
+                >
+                  <Wrench className="w-5 h-5" aria-hidden="true" />
+                  ساخت پک اختصاصی
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -147,15 +167,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section - Hidden for now */}
-      {/* 
       <section className="container py-16" aria-labelledby="cta-heading">
         <article className="bg-card rounded-3xl p-8 md:p-12 border border-border relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full" aria-hidden="true">
             <div className="absolute top-10 right-10 w-48 h-48 bg-primary/5 rounded-full blur-2xl" />
             <div className="absolute bottom-10 left-10 w-64 h-64 bg-secondary/5 rounded-full blur-2xl" />
           </div>
-          
+
           <div className="relative z-10 max-w-xl">
             <h2 id="cta-heading" className="text-2xl md:text-3xl font-bold text-foreground mb-4">
               پک اختصاصی خودتان را بسازید
@@ -172,7 +190,6 @@ export default function HomePage() {
           </div>
         </article>
       </section>
-      */}
 
       {/* FAQ Section - Hidden */}
     </AppShell>

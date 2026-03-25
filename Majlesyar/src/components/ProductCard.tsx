@@ -7,7 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 import { Input } from '@/components/ui/input';
 import { notifyInfo, notifySuccess } from '@/lib/notify';
 
-const CONTACT_PHONE = '09915505141';
+const CONTACT_PHONE = 989915505141;
 
 interface ProductCardProps {
   product: Product;

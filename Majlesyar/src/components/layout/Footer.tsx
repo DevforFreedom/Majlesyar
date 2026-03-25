@@ -4,7 +4,7 @@ import { Phone, MapPin, Instagram, Store, Home, Calendar, Send } from 'lucide-re
 import eitaaLogo from '@/assets/social/eitaa.webp';
 import baleLogo from '@/assets/social/bale.webp';
 
-const CONTACT_PHONE = '09915505141';
+const CONTACT_PHONE = '989915505141';
 const WHATSAPP_URL = `https://wa.me/98${CONTACT_PHONE.slice(1)}`;
 const TELEGRAM_URL = 'https://t.me/majlesyar';
 const EITAA_URL = 'https://eitaa.com/majlesyar';
@@ -146,30 +146,14 @@ export function Footer() {
           <nav className="space-y-4" aria-label="انواع مراسمات">
             <h3 className="font-semibold text-foreground">انواع مراسمات</h3>
             <ul className="flex flex-col gap-2">
-              <li>
-                <Link to="/events/conference" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
-                  <Calendar className="w-4 h-4" aria-hidden="true" />
-                  پک همایش و سمینار
-                </Link>
-              </li>
+            
               <li>
                 <Link to="/events/memorial" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
                   <Calendar className="w-4 h-4" aria-hidden="true" />
                   پک نذری و ترحیم
                 </Link>
               </li>
-              <li>
-                <Link to="/events/birthday" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
-                  <Calendar className="w-4 h-4" aria-hidden="true" />
-                  پک جشن تولد
-                </Link>
-              </li>
-              <li>
-                <Link to="/events/thesis" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
-                  <Calendar className="w-4 h-4" aria-hidden="true" />
-                  پک دفاع پایان‌نامه
-                </Link>
-              </li>
+             
             </ul>
           </nav>
 
